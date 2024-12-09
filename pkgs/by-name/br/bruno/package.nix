@@ -12,26 +12,25 @@
   pixman,
   cairo,
   pango,
-  npm-lockfile-fix,
   apple-sdk_11,
 }:
 
 buildNpmPackage rec {
   pname = "bruno";
-  version = "1.34.2";
+  version = "1.36.1";
 
   src = fetchFromGitHub {
     owner = "usebruno";
     repo = "bruno";
     rev = "v${version}";
-    hash = "sha256-ydb80+FP2IsobvCZiIKzbErAJNakVoSoYrhddmPmYkc=";
+    hash = "sha256-1rjLe4y7cIJ302SnCD6vRUXD1hN5G68+O83cTUvAM2c=";
 
     postFetch = ''
-      ${lib.getExe npm-lockfile-fix} $out/package-lock.json
+      cp ${./package-lock.json} $out/package-lock.json
     '';
   };
 
-  npmDepsHash = "sha256-ODE8GLIgdUEOiniki8jzkHfU5TKHWoIIbjGJjNzMZCI=";
+  npmDepsHash = "sha256-UT3DsnJDAytwJ5zZ55xrg0ULTIXmwBGeP0zUtZIb5uk=";
   npmFlags = [ "--legacy-peer-deps" ];
 
   nativeBuildInputs =
@@ -80,11 +79,11 @@ buildNpmPackage rec {
 
   # remove giflib dependency
   npmRebuildFlags = [ "--ignore-scripts" ];
-  preBuild = ''
-    substituteInPlace node_modules/canvas/binding.gyp \
-      --replace-fail "'with_gif%': '<!(node ./util/has_lib.js gif)'" "'with_gif%': 'false'"
-    npm rebuild
-  '';
+  # preBuild = ''
+  #   substituteInPlace node_modules/canvas/binding.gyp \
+  #     --replace-fail "'with_gif%': '<!(node ./util/has_lib.js gif)'" "'with_gif%': 'false'"
+  #   npm rebuild
+  # '';
 
   buildPhase = ''
     runHook preBuild
@@ -181,6 +180,7 @@ buildNpmPackage rec {
       mattpolzin
       redyf
       water-sucks
+      pietdevries94
     ];
     platforms = lib.platforms.linux ++ lib.platforms.darwin;
   };
